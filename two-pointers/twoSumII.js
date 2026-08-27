@@ -1,20 +1,4 @@
-// 2 - pointer
-
-// HINTS WHEN TO USE 2-POINTER
-// 1. if question is array or linkedlist we can use 2-points
-// 2. if sorted / sort then we can use 2 - pointers
-// 3. merge / remove depulicate / re-arrange we can use 2 - pointers
-// 4. detect cycle in linkedlist
-// 5. pair / triples / quadruple
-// 6. if present do not use extra space
-
-//  2-pointer is different from the sliding window pattern
-
-// if number needed then by doing sorting we can easily
-// if index then we can't sort, if sorted no problem we can but if not sorted, and we doo sort then indexes will change
-
-// 1st always try to think in brute force
-
+// Two Sum II
 // using brute force
 function findTargetWithBruteForce(arr, target) {
   for (let i = 0; i < arr.length; i++) {

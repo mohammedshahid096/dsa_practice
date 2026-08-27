@@ -1,448 +1,627 @@
-Two Pointer Pattern
+# 2-Pointer Pattern
 
-The Two Pointer pattern is a common technique used to solve array and linked-list problems efficiently.
+The **Two Pointer** pattern is a common technique used to solve array and linked-list problems efficiently.
 
-Instead of using nested loops, we maintain two positions (pointers) and move them according to the problem's conditions.
+Instead of using nested loops, we use two variables called **pointers** to keep track of positions.
 
-What is Two Pointer?
+---
 
-Two Pointer means using two variables to keep track of positions in an array or linked list.
+## 1. When to Use 2-Pointer
 
-For an array, they are commonly:
+Think about the Two Pointer pattern when:
 
-let start = 0;
-let end = arr.length - 1;
+- The problem involves an array or linked list.
+- The array is sorted.
+- You can sort the array.
+- The problem asks for pairs, triplets, or quadruples.
+- You need to merge arrays.
+- You need to remove duplicates.
+- You need to rearrange elements.
+- You need to compare elements from both ends.
+- You need to detect a cycle in a linked list.
+- The problem asks you to avoid extra space.
 
-Then we move either start or end depending on the current condition.
+### Common Keywords
+
+    pair
+    two numbers
+    triplet
+    sorted
+    merge
+    remove duplicates
+    rearrange
+    reverse
+    cycle
+
+---
+
+## 2. Two Pointer vs Sliding Window
+
+Two Pointer and Sliding Window are different patterns.
+
+### Two Pointer
+
+Two Pointer usually uses two positions:
+
+    let start = 0;
+    let end = arr.length - 1;
+
+Example:
+
+    [1, 2, 3, 5, 7, 9]
+     ↑           ↑
+    start       end
+
+Common problems:
+
+- Two Sum
+- Reverse Array
+- Palindrome
+- Remove Duplicates
+- Pair problems
+- Triplet problems
+
+### Sliding Window
+
+Sliding Window usually maintains a continuous range of elements:
+
+    let left = 0;
+    let right = 0;
+
+Common problems:
+
+- Longest substring
+- Maximum sum subarray
+- Minimum size subarray
+- Continuous subarray problems
+
+---
+
+## 3. Always Think About Brute Force First
+
+Before trying to optimize the problem, first understand the brute-force solution.
 
 For example:
 
-[1, 2, 3, 5, 7, 9]
-↑ ↑
-start end
+> Find two numbers whose sum equals the target.
 
-When Should We Think About Two Pointers?
+Brute-force approach:
 
-When reading a problem, consider Two Pointer when you see:
+    function findTargetWithBruteForce(arr, target) {
+      for (let i = 0; i < arr.length; i++) {
+        for (let j = i + 1; j < arr.length; j++) {
+          let sum = arr[i] + arr[j];
 
-A sorted array
-A problem involving pairs
-A problem involving triplets
-Finding two numbers with a particular sum
-Removing duplicates
-Merging arrays
-Rearranging elements
-Comparing elements from both ends
-Linked-list cycle detection
-A requirement to avoid extra space
-Common keywords
-
-If the problem says:
-
-pair
-two numbers
-sorted array
-remove duplicates
-merge
-rearrange
-reverse
-cycle
-
-you should consider whether Two Pointer can be used.
-
-Two Pointer vs Sliding Window
-
-Two Pointer and Sliding Window are related, but they are not the same pattern.
-
-Two Pointer
-
-Usually uses two independent positions that move according to a condition.
+          if (sum === target) {
+            console.log(arr[i], arr[j], "====>", sum);
+            return;
+          }
+        }
+      }
+    }
 
 Example:
 
-let start = 0;
-let end = arr.length - 1;
+    findTargetWithBruteForce([7, 11, 2, 3], 9);
 
-Typical use cases:
+Output:
 
-Two Sum in a sorted array
-Reverse an array
-Remove duplicates
-Palindrome checking
-Pair problems
-Sliding Window
+    7 2 ====> 9
 
-Usually maintains a continuous range/subarray.
+### Complexity
 
-Example:
+    Time:  O(n²)
+    Space: O(1)
 
-let left = 0;
-let right = 0;
+---
 
-The window expands and shrinks depending on a condition.
+## 4. Hash Map Approach
 
-Typical use cases:
+We can improve the brute-force solution using a Hash Map.
 
-Longest substring
-Maximum sum subarray
-Minimum-size subarray
-Problems involving a continuous subarray
-Always Think About Brute Force First
+The idea is:
 
-Before trying to optimize a problem, understand the brute-force solution.
+    difference = target - currentNumber
 
-For finding two numbers whose sum equals a target, brute force can use two loops.
+For every number, check whether the required difference already exists in the map.
 
-for (let i = 0; i < arr.length; i++) {
-for (let j = i + 1; j < arr.length; j++) {
-if (arr[i] + arr[j] === target) {
-// found the answer
-}
-}
-}
+    function findTargetWithHashMap(arr, target) {
+      const hashMap = new Map();
 
-Complexity
-Time: O(n²)
-Space: O(1)
+      for (let i = 0; i < arr.length; i++) {
+        const difference = target - arr[i];
 
-This solution is simple, but it becomes slow when the array gets large.
+        if (hashMap.has(difference)) {
+          console.log(arr[i], difference, "====>", target);
+          return;
+        }
 
-Hash Map Approach
+        hashMap.set(arr[i], i);
+      }
 
-We can improve the time complexity using a Map.
-
-For every number:
-
-difference = target - currentNumber
-
-Then check whether the difference already exists.
+      console.log("Pair not found");
+    }
 
 Example:
 
-const map = new Map();
+    findTargetWithHashMap([7, 11, 2, 3], 9);
 
-for (let i = 0; i < arr.length; i++) {
-const difference = target - arr[i];
+Output:
 
-if (map.has(difference)) {
-// pair found
-}
+    2 7 ====> 9
 
-map.set(arr[i], i);
-}
+### Complexity
 
-Complexity
-Time: O(n)
-Space: O(n)
+    Time:  O(n)
+    Space: O(n)
 
-This is usually a good solution when we need the original indexes and cannot modify the array.
+---
 
-Two Pointer Approach
+## 5. Important JavaScript Map Mistake
 
-If the array is sorted, Two Pointer gives us an efficient solution without requiring a hash map.
+Do **not** check a Map like this:
 
-Start with:
+    if (hashMap.get(difference)) {
+    }
 
-start → first element
-end → last element
+Why?
 
-Example:
-
-[1, 2, 3, 5, 7, 9]
-↑ ↑
-start end
-
-Calculate:
-
-sum = arr[start] + arr[end];
-
-Then:
-
-If sum equals target
-
-We found the answer.
-
-if (sum === target) {
-// found
-}
-
-If sum is smaller than target
-
-We need a larger number.
-
-Move start forward:
-
-start++;
-
-If sum is greater than target
-
-We need a smaller number.
-
-Move end backward:
-
-end--;
-
-Why Does This Work?
-
-Suppose:
-
-[1, 2, 3, 5, 7, 9]
-↑ ↑
-start end
-
-Target:
-
-10
-
-First:
-
-1 + 9 = 10
-
-We found the answer.
-
-Now consider:
-
-[1, 2, 3, 5, 7, 9]
-↑ ↑
-start end
-
-1 + 9 = 10
-
-If instead the sum were smaller than the target:
-
-1 + 7 = 8
-
-Moving end backward would make the sum even smaller.
-
-So we move:
-
-start++
-
-If the sum were too large:
-
-3 + 9 = 12
-
-Moving start forward could make the sum larger.
-
-So we move:
-
-end--
-
-This is why the sorted order is important.
-
-Example
-
-Input:
-
-[2, 5, 1, 7, 3]
-
-Target:
-
-10
-
-After sorting:
-
-[1, 2, 3, 5, 7]
-↑ ↑
-start end
-
-Check:
-
-1 + 7 = 8
-
-Too small:
-
-start++
-
-Now:
-
-[1, 2, 3, 5, 7]
-↑ ↑
-start end
-
-2 + 7 = 9
-
-Still too small:
-
-start++
-
-Now:
-
-[1, 2, 3, 5, 7]
-↑ ↑
-start end
-
-3 + 7 = 10
-
-Found the answer.
-
-Result:
-
-3 and 7
-
-Important: Sorting Can Change Indexes
-
-This is one of the most important things to remember.
-
-Suppose:
-
-const arr = [7, 11, 2, 3];
-
-Original indexes:
-
-7 → 0
-11 → 1
-2 → 2
-3 → 3
-
-After sorting:
-
-[2, 3, 7, 11]
-
-The indexes have changed.
-
-Therefore:
-
-If the question asks for the actual values, sorting is usually fine.
-
-But:
-
-If the question asks for the original indexes, sorting can cause a problem.
-
-For original indexes, a hash map is often a better choice.
-
-Important JavaScript Map Mistake
-
-Avoid doing this:
-
-if (map.get(difference)) {
-
-because index 0 is falsy in JavaScript.
+Because index `0` is falsy in JavaScript.
 
 For example:
 
-map.set(7, 0);
+    hashMap.set(7, 0);
 
 Then:
 
-map.get(7)
+    hashMap.get(7);
 
 returns:
 
-0
+    0
 
 But:
 
-if (0)
+    if (0) {
+      // This will not execute
+    }
 
-is false.
+Therefore, use:
 
-Instead use:
+    if (hashMap.has(difference)) {
+    }
 
-if (map.has(difference)) {
+`has()` checks whether the key exists.
 
-This correctly checks whether the key exists.
+---
 
-Important Loop Detail
+## 6. Two Pointer Approach
 
-For a pair problem, don't compare an element with itself.
+If the array is sorted, we can use Two Pointer.
 
-Prefer:
+First sort the array:
 
-for (let j = i + 1; j < arr.length; j++)
+    arr.sort((a, b) => a - b);
+
+Then create two pointers:
+
+    let start = 0;
+    let end = arr.length - 1;
+
+Example:
+
+    [1, 2, 3, 5, 7, 9]
+     ↑           ↑
+    start       end
+
+Calculate:
+
+    const sum = arr[start] + arr[end];
+
+There are three possibilities.
+
+### Case 1: sum === target
+
+We found the answer.
+
+    if (sum === target) {
+      // Answer found
+    }
+
+### Case 2: sum < target
+
+The current sum is too small.
+
+We need a bigger value.
+
+Because the array is sorted, move `start` forward:
+
+    start++;
+
+Example:
+
+    1 + 7 = 8
+
+Target:
+
+    10
+
+8 is too small, so:
+
+    start++;
+
+### Case 3: sum > target
+
+The current sum is too large.
+
+We need a smaller value.
+
+Because the array is sorted, move `end` backward:
+
+    end--;
+
+Example:
+
+    5 + 7 = 12
+
+Target:
+
+    10
+
+12 is too large, so:
+
+    end--;
+
+---
+
+## 7. Why Does Two Pointer Work?
+
+The most important reason is:
+
+> The array is sorted.
+
+Example:
+
+    [1, 2, 3, 5, 7, 9]
+     ↑           ↑
+    start       end
+
+Suppose:
+
+    target = 10
+
+If:
+
+    arr[start] + arr[end] < target
+
+We need a larger number.
+
+Therefore:
+
+    start++;
+
+If:
+
+    arr[start] + arr[end] > target
+
+We need a smaller number.
+
+Therefore:
+
+    end--;
+
+If:
+
+    arr[start] + arr[end] === target
+
+We found the answer.
+
+This allows us to eliminate many unnecessary combinations.
+
+---
+
+## 8. Example
+
+Input:
+
+    const arr = [2, 5, 1, 7, 3];
+    const target = 10;
+
+After sorting:
+
+    [1, 2, 3, 5, 7]
+     ↑           ↑
+    start       end
+
+### Step 1
+
+    1 + 7 = 8
+
+8 < 10.
+
+Move `start`:
+
+    [1, 2, 3, 5, 7]
+        ↑        ↑
+      start     end
+
+### Step 2
+
+    2 + 7 = 9
+
+9 < 10.
+
+Move `start`:
+
+    [1, 2, 3, 5, 7]
+           ↑     ↑
+         start  end
+
+### Step 3
+
+    3 + 7 = 10
+
+10 === 10.
+
+Answer:
+
+    3 and 7
+
+---
+
+## 9. Two Pointer Code
+
+    function findTargetWithTwoPointer(arr, target) {
+      arr.sort((a, b) => a - b);
+
+      let start = 0;
+      let end = arr.length - 1;
+
+      while (start < end) {
+        const sum = arr[start] + arr[end];
+
+        if (sum === target) {
+          console.log(arr[start], arr[end], "are the numbers");
+          return;
+        }
+
+        if (sum < target) {
+          start++;
+        } else {
+          end--;
+        }
+      }
+
+      console.log("Pair not found");
+    }
+
+Example:
+
+    findTargetWithTwoPointer([2, 5, 1, 7, 3], 10);
+
+Output:
+
+    3 7 are the numbers
+
+---
+
+## 10. Why `start < end`?
+
+We use:
+
+    while (start < end)
 
 instead of:
 
-for (let j = i; j < arr.length; j++)
+    while (start <= end)
 
-Because with j = i, you are checking:
+because we need two different elements.
 
-arr[i] + arr[i]
+We don't want to use the same element twice.
 
-which may not be allowed by the problem.
+Once:
 
-Complexity Comparison
-Approach Time Space
-Brute Force O(n²) O(1)
-Hash Map O(n) O(n)
-Two Pointer + Sort O(n log n) O(1)\*
+    start === end
 
-O(1) space assumes the sorting operation is considered in-place. JavaScript's actual Array.prototype.sort() implementation may use additional internal memory.
+both pointers point to the same element, so we stop.
 
-Decision Making
+---
 
-When you see a Two Sum-style problem, think:
+## 11. Important: Sorting Changes Indexes
 
-Can I use brute force?
-↓
-Can I optimize with a Hash Map?
-↓
-Is the array already sorted?
-↓
-Can I sort it?
-↓
-Do I need original indexes?
-↓
-Choose the approach
+This is very important.
 
-If you need original indexes
+Suppose:
+
+    const arr = [7, 11, 2, 3];
+
+Original array:
+
+    Index:  0   1   2   3
+    Value:  7  11   2   3
+
+After sorting:
+
+    arr.sort((a, b) => a - b);
+
+We get:
+
+    Index:  0   1   2   3
+    Value:  2   3   7  11
+
+The indexes have changed.
+
+### If the question asks for numbers
+
+Sorting is usually okay.
+
+Example:
+
+    Return:
+    [2, 7]
+
+### If the question asks for original indexes
+
+Be careful.
+
+Example:
+
+    Input:
+    [7, 11, 2, 3]
+
+    Target:
+    9
+
+The answer values are:
+
+    7 + 2 = 9
+
+Original indexes:
+
+    7 -> index 0
+    2 -> index 2
+
+Answer:
+
+    [0, 2]
+
+If we sort the array first, those original indexes are lost.
+
+In this situation, a Hash Map is usually a better approach.
+
+---
+
+## 12. Brute Force vs Hash Map vs Two Pointer
+
+| Approach           |       Time |  Space | Indexes          |
+| ------------------ | ---------: | -----: | ---------------- |
+| Brute Force        |      O(n²) |   O(1) | Original indexes |
+| Hash Map           |       O(n) |   O(n) | Original indexes |
+| Sort + Two Pointer | O(n log n) | O(1)\* | Indexes change   |
+
+`*` The space complexity assumes an in-place sorting model.
+
+JavaScript's actual sorting implementation may use additional internal memory.
+
+---
+
+## 13. Which Approach Should I Use?
+
+### Need original indexes?
 
 Use:
 
-Hash Map
+    Hash Map
 
-If you only need the numbers
+Because sorting changes indexes.
+
+### Only need the numbers?
 
 You can consider:
 
-Sort + Two Pointer
+    Sort + Two Pointer
 
-If the array is already sorted
+### Array is already sorted?
 
-Two Pointer is often the natural choice.
+Two Pointer is usually a very good choice.
 
-Two Pointer Template
-function twoPointer(arr, target) {
-let start = 0;
-let end = arr.length - 1;
+---
 
-while (start < end) {
-const sum = arr[start] + arr[end];
+## 14. General Two Pointer Template
 
-    if (sum === target) {
-      return [arr[start], arr[end]];
+    function twoPointer(arr, target) {
+      let start = 0;
+      let end = arr.length - 1;
+
+      while (start < end) {
+        const sum = arr[start] + arr[end];
+
+        if (sum === target) {
+          return [arr[start], arr[end]];
+        }
+
+        if (sum < target) {
+          start++;
+        } else {
+          end--;
+        }
+      }
+
+      return null;
     }
 
-    if (sum < target) {
-      start++;
-    } else {
-      end--;
-    }
+For an unsorted array:
 
-}
+    arr.sort((a, b) => a - b);
 
-return null;
-}
+before using the Two Pointer technique.
 
-For an unsorted array, sort first:
+---
 
-arr.sort((a, b) => a - b);
+## 15. Two Pointer Mental Model
 
-Mental Checklist
+Remember:
+
+    sum < target
+          ↓
+    Need a bigger number
+          ↓
+        start++
+
+    sum > target
+          ↓
+    Need a smaller number
+          ↓
+        end--
+
+    sum === target
+          ↓
+      Answer found
+
+---
+
+## 16. Mental Checklist
 
 When solving an array problem, ask:
 
-Is the array sorted?
-Can I sort it?
-Do I need the original indexes?
-Am I looking for a pair/triplet?
-Can I use two positions?
-Can I solve it without extra space?
-What happens when the sum is too small?
-What happens when the sum is too large?
-What is the brute-force solution?
-What is the optimized solution?
+1. Is the array sorted?
+2. Can I sort the array?
+3. Do I need the original indexes?
+4. Am I looking for a pair?
+5. Am I looking for a triplet?
+6. Can I use two pointers?
+7. Can I solve it without extra space?
+8. What happens when the sum is too small?
+9. What happens when the sum is too large?
+10. What is the brute-force solution?
+11. What is the optimized solution?
 
-The goal is not to immediately recognize a pattern.
+---
 
-The goal is to understand why the pattern works.
+## 17. Key Takeaway
+
+The basic Two Pointer idea is:
+
+    Sorted Array
+         ↓
+    Two Pointers
+         ↓
+    Compare Values
+         ↓
+    Move Start or End
+         ↓
+    Reduce Unnecessary Comparisons
+
+Remember:
+
+    sum < target   → start++
+
+    sum > target   → end--
+
+    sum === target → answer found
+
+The most important thing is not just memorizing the pattern.
+
+Understand **why** we move `start` and `end`.
+
+That understanding allows you to recognize Two Pointer problems in different forms.
